@@ -10,7 +10,7 @@ const PAN_SPEED := 5.0
 const STARTING_BUDGET := 1000
 
 var furniture_delivered: int = 0
-var time_remaining: float = 60.0
+var time_remaining: float = 300.0
 var is_dragging: bool = false
 var drag_start: Vector2 = Vector2.ZERO
 var target_camera_x: float = 960.0
