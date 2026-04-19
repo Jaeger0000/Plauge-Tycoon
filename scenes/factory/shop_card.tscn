@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://c1xxfflgippxp"]
+
+[ext_resource type="Script" uid="uid://cdwqeh52noq0w" path="res://scenes/factory/shop_item.gd" id="1_script"]
+
+[node name="ShopCard" type="Panel" unique_id=2033021130]
+custom_minimum_size = Vector2(130, 250)
+offset_right = 130.0
+offset_bottom = 250.0
+mouse_default_cursor_shape = 2
+script = ExtResource("1_script")
+
+[node name="CardSprite" type="TextureRect" parent="." unique_id=1357863526]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch_mode = 5
+
+[node name="Overlay" type="VBoxContainer" parent="." unique_id=534337784]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 32.0
+offset_right = -2.0
+offset_bottom = -58.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NameLabel" type="Label" parent="Overlay" unique_id=1999356162]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.17, 0.17, 0.17, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Overlay" unique_id=1501253214]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="CostLabel" type="Label" parent="Overlay" unique_id=1126298828]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="SpeedLabel" type="Label" parent="Overlay" unique_id=1037986913]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1

@@ -95,90 +95,44 @@ func _ready() -> void:
 
 
 func _create_shop_item(mname: String, mdata: Dictionary) -> Control:
-	var panel := Panel.new()
-	panel.custom_minimum_size = Vector2(150, 250)
+	var card: Control = preload("res://scenes/factory/shop_card.tscn").instantiate()
 
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.12, 0.15, 0.9)
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
-	style.content_margin_left = 8
-	style.content_margin_right = 8
-	style.content_margin_top = 6
-	style.content_margin_bottom = 6
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = mdata["color"].darkened(0.2)
-	panel.add_theme_stylebox_override("panel", style)
+	var is_legend := mname == "Omega"
+	var card_w := 128 if is_legend else 108
+	var card_h := 228 if is_legend else 204
+	card.custom_minimum_size = Vector2(card_w + 16, card_h + 50)
 
-	var vbox := VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vbox.offset_left = 8
-	vbox.offset_top = 6
-	vbox.offset_right = -8
-	vbox.offset_bottom = -6
-	vbox.add_theme_constant_override("separation", 4)
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	panel.add_child(vbox)
+	# Set card sprite
+	var card_path: String = mdata.get("card", "")
+	if not card_path.is_empty():
+		var card_sprite: TextureRect = card.get_node("%CardSprite")
+		card_sprite.texture = load(card_path)
+		# Omega's card_legend.png has a glare in top-left, visual center is at (72,124)
+		# in a 126x228 image. Offset sprite to compensate: shift left 9px, up 10px.
+		if is_legend:
+			card_sprite.offset_left = -9
+			card_sprite.offset_top = -10
+			card_sprite.offset_right = -9
+			card_sprite.offset_bottom = -10
 
-	# Worker sprite placeholder — Godot icon tinted with worker color
-	var icon_container := CenterContainer.new()
-	icon_container.custom_minimum_size = Vector2(0, 90)
-	vbox.add_child(icon_container)
-
-	var worker_icon := TextureRect.new()
-	var sprite_path: String = mdata.get("sprite", "")
-	if not sprite_path.is_empty():
-		var sheet: Texture2D = load(sprite_path)
-		if sheet:
-			var atlas := AtlasTexture.new()
-			atlas.atlas = sheet
-			atlas.region = Rect2(0, 0, 96, 96)
-			worker_icon.texture = atlas
-	else:
-		worker_icon.texture = preload("res://icon.svg")
-		worker_icon.modulate = mdata["color"]
-	worker_icon.custom_minimum_size = Vector2(72, 72)
-	worker_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	worker_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon_container.add_child(worker_icon)
-
-	# Worker name
-	var name_lbl := Label.new()
-	name_lbl.text = mname
-	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_lbl.add_theme_font_size_override("font_size", 15)
-	vbox.add_child(name_lbl)
-
-	# Cost
-	var cost_lbl := Label.new()
-	cost_lbl.text = "%d coins" % mdata["cost"]
-	cost_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cost_lbl.add_theme_font_size_override("font_size", 13)
-	cost_lbl.add_theme_color_override("font_color", Color(0.9, 0.8, 0.3))
-	vbox.add_child(cost_lbl)
-
-	# Speed stats
-	var speed_lbl := Label.new()
-	speed_lbl.text = "Ster: x%.1f\nCut: x%.1f\nPkg: x%.1f" % [
+	# Set text overlays
+	card.get_node("%NameLabel").text = mname
+	card.get_node("%CostLabel").text = "%d coins" % mdata["cost"]
+	card.get_node("%SpeedLabel").text = "S:x%.1f C:x%.1f P:x%.1f" % [
 		mdata["sterilize_speed"], mdata["cutting_speed"], mdata["packaging_speed"]
 	]
-	speed_lbl.add_theme_font_size_override("font_size", 11)
-	speed_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(speed_lbl)
 
-	# Attach draggable shop_item script
-	panel.set_script(preload("res://scenes/factory/shop_item.gd"))
-	panel.machine_name = mname
-	panel.machine_cost = mdata["cost"]
-	panel.factory_zone = self
-	panel.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	# Transparent panel background
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	card.add_theme_stylebox_override("panel", style)
 
-	return panel
+	# Set shop_item script properties
+	card.machine_name = mname
+	card.machine_cost = mdata["cost"]
+	card.factory_zone = self
+
+	return card
 
 
 # --- Runtime ---

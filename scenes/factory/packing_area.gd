@@ -35,12 +35,17 @@ func _init_grid() -> void:
 
 func add_packaged_item(furniture_type: String) -> void:
 	var fdata: Dictionary = FactoryData.FURNITURE[furniture_type]
+	var sprites: Array = fdata.get("sprites", [])
+	var sprite_path: String = ""
+	if sprites.size() > 0:
+		sprite_path = sprites[randi() % sprites.size()]
 	var item_data := {
 		"id": _next_id,
 		"type": furniture_type,
 		"w": int(fdata["grid_w"]),
 		"h": int(fdata["grid_h"]),
 		"color": FactoryData.get_stage_color(FactoryData.STAGE_PACKAGED, furniture_type),
+		"sprite": sprite_path,
 	}
 	_next_id += 1
 	item_queue.append(item_data)
@@ -133,6 +138,7 @@ func place_item_by_id(grid_x: int, grid_y: int, item_id: int) -> void:
 		"w": w,
 		"h": h,
 		"color": idata["color"],
+		"sprite": idata.get("sprite", ""),
 	})
 
 	item_queue.remove_at(idx)

@@ -1,6 +1,17 @@
 extends Control
 
 var packing_area = null  # PackingArea reference
+var _tex_cache: Dictionary = {}
+
+
+func _get_cached_texture(path: String) -> Texture2D:
+	if path.is_empty():
+		return null
+	if _tex_cache.has(path):
+		return _tex_cache[path]
+	var tex: Texture2D = load(path)
+	_tex_cache[path] = tex
+	return tex
 
 
 func _draw() -> void:
@@ -24,14 +35,13 @@ func _draw() -> void:
 				Vector2(item["grid_x"] * cs + 2, item["grid_y"] * cs + 2),
 				Vector2(item["w"] * cs - 4, item["h"] * cs - 4)
 			)
-			draw_rect(rect, item["color"])
+			var sprite_path: String = item.get("sprite", "")
+			var tex: Texture2D = _get_cached_texture(sprite_path)
+			if tex:
+				draw_texture_rect(tex, rect, false)
+			else:
+				draw_rect(rect, item["color"])
 			draw_rect(rect, Color(1, 1, 1, 0.3), false, 1.0)
-			# Item label
-			var font := ThemeDB.fallback_font
-			var fsize := ThemeDB.fallback_font_size
-			if font:
-				var text_pos := rect.position + Vector2(4, rect.size.y / 2.0 + 5)
-				draw_string(font, text_pos, item["type"], HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 8, fsize)
 
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:

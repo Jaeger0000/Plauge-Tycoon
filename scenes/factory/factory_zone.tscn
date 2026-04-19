@@ -90,7 +90,7 @@ layout_mode = 0
 offset_left = 320.0
 offset_top = 31.0
 offset_right = 400.0
-offset_bottom = 531.0
+offset_bottom = 578.0
 
 [node name="SterilizeGroup" type="Panel" parent="StagesArea" unique_id=898874591]
 layout_mode = 0
@@ -144,7 +144,7 @@ layout_mode = 0
 offset_left = 800.0
 offset_top = 31.0
 offset_right = 880.0
-offset_bottom = 531.0
+offset_bottom = 584.0
 
 [node name="CuttingGroup" type="Panel" parent="StagesArea" unique_id=287659353]
 layout_mode = 0
@@ -198,7 +198,7 @@ layout_mode = 0
 offset_left = 1288.0
 offset_top = 31.0
 offset_right = 1366.0
-offset_bottom = 527.0
+offset_bottom = 580.0
 
 [node name="PackagingGroup" type="Panel" parent="StagesArea" unique_id=521218757]
 layout_mode = 0
@@ -251,11 +251,12 @@ layout_mode = 0
 offset_left = 1664.0
 offset_top = 31.0
 offset_right = 1744.0
-offset_bottom = 531.0
+offset_bottom = 584.0
 
 [node name="ShopPanel" type="Panel" parent="." unique_id=2053775218]
 unique_name_in_owner = true
 layout_mode = 0
+offset_left = 40.0
 offset_top = 770.0
 offset_right = 808.0
 offset_bottom = 1018.0
