@@ -66,7 +66,7 @@ call_get "/health" "Health Check"
 
 call_post "/solve/transport" "Transport" '{
   "forests": [
-    {"name": "Pine", "capacity": 40, "regen_rate": 0.8, "position": [100, 200]},
+    {"name": "Pine", "capacity": 40, "regen_rate": 0.8, "position": [100, 200], "current_stock": 12},
     {"name": "Oak", "capacity": 35, "regen_rate": 0.7, "position": [400, 300]}
   ],
   "factory_position": [900, 500],
@@ -93,7 +93,7 @@ call_post "/solve/packing" "Packing" '{
   ],
   "time_remaining": 180,
   "budget_remaining": 600,
-  "packaging_cost_per_item": 50
+  "packaging_cost_per_crate": 50
 }'
 
 call_post "/solve/tsp" "TSP" '{
@@ -104,14 +104,30 @@ call_post "/solve/tsp" "TSP" '{
     {"name": "Office", "position": [600, 600], "demand": 2}
   ],
   "truck_capacity": 10,
-  "available_crates": 6
+  "available_crates": 6,
+  "depot_restock_rate": 1.0,
+  "truck_speed": 200,
+  "time_remaining": 180
 }'
 
 call_post "/solve/full" "Full Solve" '{
   "budget": 1000,
-  "machine_slots": ["cutting", "assembly", "packaging"],
-  "furniture_queue": ["Chair", "Table", "Shelf", "Stool", "Chair", "Table", "Stool"],
+  "transport_forests": [
+    {"name": "Pine", "capacity": 5000, "regen_rate": 3.0, "position": [120, 220], "current_stock": 18},
+    {"name": "Oak", "capacity": 5000, "regen_rate": 100.0, "position": [380, 140], "current_stock": 10}
+  ],
+  "factory_position": [900, 500],
+  "owned_trucks": {"Small": 1},
+  "trucks": [
+    {"type": "Medium", "speed": 200, "capacity": 4, "cost": 150},
+    {"type": "Large", "speed": 200, "capacity": 8, "cost": 250}
+  ],
   "crate_size": [6, 6],
+  "items": [
+    {"id": 0, "type": "Chair", "w": 5, "h": 1},
+    {"id": 1, "type": "Table", "w": 5, "h": 2},
+    {"id": 2, "type": "Shelf", "w": 4, "h": 3}
+  ],
   "depot": [100, 100],
   "shops": [
     {"name": "Market", "position": [500, 200], "demand": 3},
@@ -120,7 +136,8 @@ call_post "/solve/full" "Full Solve" '{
   ],
   "truck_capacity": 10,
   "time_remaining": 180,
-  "packaging_cost_per_item": 50,
+  "truck_speed": 200,
+  "packaging_cost_per_crate": 50,
   "item_arrival_interval": 2.0
 }'
 

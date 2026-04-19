@@ -33,14 +33,18 @@ FastAPI generates interactive documentation automatically:
 
 Open Swagger UI in a browser after starting the server to inspect the request and response models.
 
+The request bodies shown in Swagger UI are populated from the model examples in `models.py`.
+
 ## Endpoints
 
 - `GET /`
 - `GET /health`
+- `POST /solve/machine_placement`
 - `POST /solve/packing`
+- `POST /packing` (alias)
 - `POST /solve/tsp`
-- `POST /solve/assignment`
 - `POST /solve/transport`
+- `POST /solve/full`
 
 ## Smoke Test
 

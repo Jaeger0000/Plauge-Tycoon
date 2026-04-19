@@ -157,15 +157,15 @@ def route_machine_placement(req: MachinePlacementRequest) -> MachinePlacementRes
         return _fallback_machine_placement(req)
 
 
-# @router.post(
-#     "/solve/packing",
-#     response_model=PackingResponse,
-#     summary="Optimise crate packing (6×6 grid)",
-#     description=(
-#         "GAMSPy MIP: maximise items packed into one crate. "
-#         "Pass budget_remaining + packaging_cost_per_item to enforce the coin cap."
-#     ),
-# )
+@router.post(
+    "/solve/packing",
+    response_model=PackingResponse,
+    summary="Optimise crate packing (6×6 grid)",
+    description=(
+        "GAMSPy MIP: maximise items packed into one crate. "
+        "Pass budget_remaining or budget together with packaging_cost_per_crate to enforce the coin cap."
+    ),
+)
 @router.post(
     "/packing",
     response_model=PackingResponse,

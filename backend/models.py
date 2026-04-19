@@ -1,6 +1,111 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+TRANSPORT_REQUEST_EXAMPLE = {
+    "forests": [
+        {
+            "name": "Pine",
+            "capacity": 40,
+            "regen_rate": 0.8,
+            "position": [100.0, 200.0],
+            "current_stock": 12,
+        },
+        {
+            "name": "Oak",
+            "capacity": 35,
+            "regen_rate": 0.7,
+            "position": [400.0, 300.0],
+        },
+    ],
+    "factory_position": [900.0, 500.0],
+    "budget": 250,
+    "owned_trucks": {"Small": 1},
+    "trucks": [
+        {"type": "Medium", "speed": 200.0, "capacity": 4, "cost": 150},
+        {"type": "Large", "speed": 120.0, "capacity": 8, "cost": 250},
+    ],
+    "time_remaining": 180.0,
+}
+
+MACHINE_PLACEMENT_REQUEST_EXAMPLE = {
+    "budget": 1000,
+    "time_remaining": 180.0,
+    "corpse_count": 6,
+}
+
+PACKING_REQUEST_EXAMPLE = {
+    "crate_size": [6, 6],
+    "items": [
+        {"id": 1, "type": "Chair", "w": 2, "h": 2},
+        {"id": 2, "type": "Table", "w": 3, "h": 2},
+        {"id": 3, "type": "Stool", "w": 1, "h": 1},
+        {"id": 4, "type": "Shelf", "w": 3, "h": 1},
+    ],
+    "time_remaining": 180.0,
+    "budget_remaining": 600,
+    "packaging_cost_per_crate": 50,
+}
+
+TSP_REQUEST_EXAMPLE = {
+    "depot": [100.0, 100.0],
+    "shops": [
+        {"name": "Market", "position": [500.0, 200.0], "demand": 3},
+        {"name": "Boutique", "position": [800.0, 250.0], "demand": 2},
+        {"name": "Office", "position": [600.0, 600.0], "demand": 2},
+    ],
+    "truck_capacity": 10,
+    "available_crates": 6,
+    "depot_restock_rate": 1.0,
+    "truck_speed": 200.0,
+    "time_remaining": 180.0,
+    "budget": 0,
+    "truck_load": 6,
+}
+
+FULL_SOLVE_REQUEST_EXAMPLE = {
+    "budget": 1000,
+    "transport_forests": [
+        {
+            "name": "Pine",
+            "capacity": 5000,
+            "regen_rate": 3.0,
+            "position": [120.0, 220.0],
+            "current_stock": 18,
+        },
+        {
+            "name": "Oak",
+            "capacity": 5000,
+            "regen_rate": 100.0,
+            "position": [380.0, 140.0],
+            "current_stock": 10,
+        },
+    ],
+    "factory_position": [900.0, 500.0],
+    "owned_trucks": {"Small": 1},
+    "trucks": [
+        {"type": "Medium", "speed": 200.0, "capacity": 4, "cost": 150},
+        {"type": "Large", "speed": 200.0, "capacity": 8, "cost": 250},
+    ],
+    "crate_size": [6, 6],
+    "items": [
+        {"id": 0, "type": "Chair", "w": 5, "h": 1},
+        {"id": 1, "type": "Table", "w": 5, "h": 2},
+        {"id": 2, "type": "Shelf", "w": 4, "h": 3},
+    ],
+    "depot": [100.0, 100.0],
+    "shops": [
+        {"name": "Market", "position": [500.0, 200.0], "demand": 3},
+        {"name": "Boutique", "position": [800.0, 250.0], "demand": 2},
+        {"name": "Office", "position": [600.0, 600.0], "demand": 2},
+    ],
+    "truck_capacity": 10,
+    "truck_speed": 200.0,
+    "time_remaining": 180.0,
+    "packaging_cost_per_crate": 50,
+    "item_arrival_interval": 2.0,
+}
 
 # ---------------------------------------------------------------------------
 # Legacy transport models (kept for Godot compatibility)
@@ -22,6 +127,8 @@ class Truck(BaseModel):
 
 
 class TransportRequest(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": TRANSPORT_REQUEST_EXAMPLE})
+
     forests: list[Forest]
     factory_position: list[float]
     budget: int = Field(default=0, ge=0)
@@ -68,6 +175,8 @@ class SupplyRequest(BaseModel):
     ``owned_trucks`` maps truck type → count of trucks already in the player's
     fleet (default: 1 Small truck, the free starting truck).
     """
+    model_config = ConfigDict(json_schema_extra={"example": TRANSPORT_REQUEST_EXAMPLE})
+
     budget: int = Field(default=0, ge=0)
     time_remaining: float = Field(default=300.0, ge=0.0)
     forests: list[ForestInput] = Field(default_factory=list)
@@ -103,6 +212,8 @@ class PackingItem(BaseModel):
 
 
 class PackingRequest(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": PACKING_REQUEST_EXAMPLE})
+
     crate_size: list[int] = Field(default_factory=lambda: [6, 6])
     items: list[PackingItem] = Field(default_factory=list)
     time_remaining: float = Field(default=300.0, ge=0.0)
@@ -202,6 +313,8 @@ class MachinePlacementRequest(BaseModel):
     Optimise machine counts for each stage using only budget, time remaining,
     and incoming body count.
     """
+    model_config = ConfigDict(json_schema_extra={"example": MACHINE_PLACEMENT_REQUEST_EXAMPLE})
+
     budget: int = Field(default=1000, ge=0)
     time_remaining: float = Field(default=300.0, ge=0.0)
     corpse_count: int = Field(default=0, ge=0)
@@ -240,6 +353,8 @@ class Shop(BaseModel):
 
 
 class TSPRequest(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": TSP_REQUEST_EXAMPLE})
+
     depot: list[float]
     shops: list[Shop] = Field(default_factory=list)
     truck_capacity: int = Field(default=0, ge=0)
@@ -282,6 +397,8 @@ class FullSolveRequest(BaseModel):
       3. crate packing       →  packs the user-provided items
       4. delivery routing    →  delivers packed crates to shops
     """
+    model_config = ConfigDict(json_schema_extra={"example": FULL_SOLVE_REQUEST_EXAMPLE})
+
     budget: int = Field(default=1000, ge=0)
     transport_forests: list[Forest] = Field(default_factory=list)
     factory_position: list[float] = Field(default_factory=lambda: [0.0, 0.0])
