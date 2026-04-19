@@ -277,19 +277,23 @@ class TSPResponse(BaseModel):
 class FullSolveRequest(BaseModel):
     """
     Single request that chains all three optimisations:
-      1. machine placement  →  determines which items get produced
-      2. crate packing      →  determines how many crates are filled
-      3. delivery routing   →  determines optimal truck route
+      1. transport           →  buys/assigns trucks and produces raw output
+      2. machine placement   →  converts output into processable packages
+      3. crate packing       →  packs the user-provided items
+      4. delivery routing    →  delivers packed crates to shops
     """
     budget: int = Field(default=1000, ge=0)
-    machine_slots: list[str] = Field(
-        default_factory=lambda: ["cutting", "assembly", "packaging"]
-    )
-    furniture_queue: list[str] = Field(default_factory=list)
+    transport_forests: list[Forest] = Field(default_factory=list)
+    factory_position: list[float] = Field(default_factory=lambda: [0.0, 0.0])
+    owned_trucks: dict[str, int] = Field(default_factory=lambda: {"Small": 1})
+    trucks: list[Truck] = Field(default_factory=list)
     crate_size: list[int] = Field(default_factory=lambda: [6, 6])
+    items: list[PackingItem] = Field(default_factory=list)
+    furniture_queue: list[str] = Field(default_factory=list)
     depot: list[float]
-    shops: list[Shop]
-    truck_capacity: int
+    shops: list[Shop] = Field(default_factory=list)
+    truck_capacity: int = Field(default=0, ge=0)
+    truck_speed: float = Field(default=200.0, gt=0.0)
     time_remaining: float = Field(default=300.0, ge=0.0)
     packaging_cost_per_crate: Optional[int] = Field(default=None, ge=0)
     # Backward-compat alias for older clients.
@@ -298,8 +302,12 @@ class FullSolveRequest(BaseModel):
 
 
 class FullSolveResponse(BaseModel):
+    transport: TransportResponse
     machine_placement: MachinePlacementResponse
     packing: PackingResponse
     delivery: TSPResponse
     total_items_estimated: int
+    budget_flow: dict[str, float]
+    derived_values: dict[str, float]
+    pipeline_warnings: list[str] = Field(default_factory=list)
     score_breakdown: dict[str, float]
