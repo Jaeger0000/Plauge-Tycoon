@@ -1,0 +1,149 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scenes/supply/supply_zone.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/supply/forest_node.tscn" id="2_forest"]
+[ext_resource type="PackedScene" path="res://scenes/supply/factory_entrance.tscn" id="3_entrance"]
+[ext_resource type="Script" path="res://scenes/supply/routes_node.gd" id="4_routes"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shop"]
+bg_color = Color(0.1, 0.1, 0.13, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.45, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pool"]
+bg_color = Color(0.12, 0.12, 0.15, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.35, 0.3, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="SupplyZone" type="Control"]
+custom_minimum_size = Vector2(1920, 1080)
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="RoutesNode" type="Control" parent="."]
+unique_name_in_owner = true
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+script = ExtResource("4_routes")
+
+[node name="PineForest" parent="." instance=ExtResource("2_forest")]
+unique_name_in_owner = true
+offset_left = 140.0
+offset_top = 150.0
+offset_right = 260.0
+offset_bottom = 250.0
+forest_name = "Pine"
+max_stock = 12
+regen_rate = 3.0
+forest_color = Color(0.15, 0.45, 0.15, 1)
+
+[node name="OakForest" parent="." instance=ExtResource("2_forest")]
+unique_name_in_owner = true
+offset_left = 140.0
+offset_top = 490.0
+offset_right = 260.0
+offset_bottom = 590.0
+forest_name = "Oak"
+max_stock = 10
+regen_rate = 4.0
+forest_color = Color(0.35, 0.42, 0.18, 1)
+
+[node name="BirchForest" parent="." instance=ExtResource("2_forest")]
+unique_name_in_owner = true
+offset_left = 140.0
+offset_top = 800.0
+offset_right = 260.0
+offset_bottom = 900.0
+forest_name = "Birch"
+max_stock = 8
+regen_rate = 2.0
+forest_color = Color(0.45, 0.65, 0.3, 1)
+
+[node name="FactoryEntrance" parent="." instance=ExtResource("3_entrance")]
+unique_name_in_owner = true
+offset_left = 1650.0
+offset_top = 480.0
+offset_right = 1750.0
+offset_bottom = 600.0
+
+[node name="InfoBar" type="HBoxContainer" parent="."]
+offset_left = 20.0
+offset_top = 10.0
+offset_right = 1900.0
+offset_bottom = 50.0
+
+[node name="DeliveredLabel" type="Label" parent="InfoBar"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+text = "Wood Delivered: 0"
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="ShopPanel" type="Panel" parent="."]
+offset_left = 1550.0
+offset_top = 65.0
+offset_right = 1900.0
+offset_bottom = 440.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_shop")
+
+[node name="ShopTitle" type="Label" parent="ShopPanel"]
+offset_left = 0.0
+offset_top = 8.0
+offset_right = 350.0
+offset_bottom = 35.0
+text = "TRUCK SHOP"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="ShopScroll" type="ScrollContainer" parent="ShopPanel"]
+offset_left = 5.0
+offset_top = 40.0
+offset_right = 345.0
+offset_bottom = 370.0
+horizontal_scroll_mode = 0
+
+[node name="ShopList" type="VBoxContainer" parent="ShopPanel/ShopScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="PoolPanel" type="Panel" parent="."]
+offset_left = 20.0
+offset_top = 980.0
+offset_right = 1520.0
+offset_bottom = 1070.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pool")
+
+[node name="PoolTitle" type="Label" parent="PoolPanel"]
+offset_left = 10.0
+offset_top = 2.0
+offset_right = 200.0
+offset_bottom = 22.0
+text = "Truck Pool (drag to forest)"
+theme_override_font_sizes/font_size = 12
+
+[node name="TruckPool" type="HBoxContainer" parent="PoolPanel"]
+unique_name_in_owner = true
+offset_left = 10.0
+offset_top = 25.0
+offset_right = 1490.0
+offset_bottom = 85.0
+theme_override_constants/separation = 10

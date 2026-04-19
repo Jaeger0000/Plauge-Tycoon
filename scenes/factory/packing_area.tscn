@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://cad462u4lvi5j"]
+
+[ext_resource type="Script" uid="uid://blkhv84eaejxr" path="res://scenes/factory/packing_area.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://chqgdlwg4baks" path="res://scenes/factory/packing_grid.gd" id="2_grid"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qbg"]
+bg_color = Color(0.1, 0.1, 0.12, 0.7)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="PackingArea" type="Control" unique_id=121396132]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 822.0
+offset_bottom = 424.0
+script = ExtResource("1_script")
+
+[node name="Title" type="Label" parent="." unique_id=1176702353]
+layout_mode = 0
+offset_left = 368.0
+offset_right = 688.0
+offset_bottom = 30.0
+theme_override_font_sizes/font_size = 20
+text = "PACKING AREA"
+horizontal_alignment = 1
+
+[node name="GridPanel" type="Control" parent="." unique_id=2122076840]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 378.0
+offset_top = 35.0
+offset_right = 678.0
+offset_bottom = 335.0
+script = ExtResource("2_grid")
+
+[node name="CrateLabel" type="Label" parent="." unique_id=2132100001]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 378.0
+offset_top = 340.0
+offset_right = 678.0
+offset_bottom = 365.0
+theme_override_font_sizes/font_size = 13
+text = "Crate (6x6) — drag items into grid"
+horizontal_alignment = 1
+
+[node name="ShipButton" type="Button" parent="." unique_id=864044034]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 418.0
+offset_top = 370.0
+offset_right = 638.0
+offset_bottom = 405.0
+text = "SHIP CRATE"
+
+[node name="QueueTitle" type="Label" parent="." unique_id=1568865981]
+layout_mode = 0
+offset_left = -120.0
+offset_right = 470.0
+offset_bottom = 30.0
+theme_override_font_sizes/font_size = 18
+text = "PACKAGED ITEMS QUEUE"
+horizontal_alignment = 1
+
+[node name="QueueBg" type="Panel" parent="." unique_id=1523872440]
+show_behind_parent = true
+layout_mode = 0
+offset_top = 35.0
+offset_right = 320.0
+offset_bottom = 355.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qbg")
+
+[node name="QueueScroll" type="ScrollContainer" parent="." unique_id=960349534]
+layout_mode = 0
+offset_top = 35.0
+offset_right = 320.0
+offset_bottom = 355.0
+horizontal_scroll_mode = 0
+
+[node name="QueueContainer" type="VBoxContainer" parent="QueueScroll" unique_id=244730928]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4

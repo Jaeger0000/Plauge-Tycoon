@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/distribution/delivery_truck.gd" id="1_script"]
+
+[node name="DeliveryTruck" type="Control"]
+custom_minimum_size = Vector2(40, 25)
+offset_right = 40.0
+offset_bottom = 25.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="BG" type="ColorRect" parent="."]
+offset_right = 40.0
+offset_bottom = 25.0
+mouse_filter = 2
+color = Color(0.9, 0.7, 0.1, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 25.0
+mouse_filter = 2
+text = "🚛"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14

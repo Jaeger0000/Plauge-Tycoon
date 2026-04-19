@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://c33k50grhbtka"]
+
+[ext_resource type="Script" uid="uid://fg03pjtexw8o" path="res://scenes/main_menu/main_menu.gd" id="1_menu"]
+
+[node name="MainMenu" type="Control" unique_id=1083981959]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1078197350]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.14, 0.18, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1572165567]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="VBoxContainer" unique_id=768793679]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Wood Works"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="VBoxContainer" unique_id=1078593124]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Learn Optimization Through Play"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="VBoxContainer" unique_id=595949682]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=348999438]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "Start Game"
+
+[node name="Spacer2" type="Control" parent="VBoxContainer" unique_id=1087182110]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="QuitButton" type="Button" parent="VBoxContainer" unique_id=127917836]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Quit"

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/factory/production_item.gd" id="1_script"]
+
+[node name="ProductionItem" type="ColorRect"]
+custom_minimum_size = Vector2(30, 30)
+offset_right = 30.0
+offset_bottom = 30.0
+mouse_filter = 2
+color = Color(0.55, 0.36, 0.2, 1)
+script = ExtResource("1_script")

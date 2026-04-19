@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://bk2c34k2f0y15"]
+
+[ext_resource type="Script" uid="uid://bvy1btj73uob2" path="res://scenes/factory/work_spot.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bs8g04fbpihud" path="res://sprites/basic_test.png" id="2_5mowl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_worker"]
+bg_color = Color(0.12, 0.12, 0.15, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.3, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_table"]
+bg_color = Color(0.34901962, 0.2509804, 0.14901961, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="WorkSpot" type="Control" unique_id=708675719]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 128.0
+offset_bottom = 128.0
+mouse_default_cursor_shape = 2
+script = ExtResource("1_script")
+
+[node name="WorkerArea" type="Panel" parent="." unique_id=1793614731]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+offset_left = 64.0
+offset_right = 128.0
+offset_bottom = 64.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_worker")
+
+[node name="WorkerIcon" type="TextureRect" parent="WorkerArea" unique_id=138418655]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = 8.0
+offset_right = 160.0
+offset_bottom = 136.0
+mouse_filter = 2
+texture = ExtResource("2_5mowl")
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="WorkerArea" unique_id=340541869]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 13
+text = "EMPTY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpeedLabel" type="Label" parent="WorkerArea" unique_id=799186907]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = -8.0
+offset_top = 60.0
+offset_right = 77.0
+offset_bottom = 124.0
+theme_override_font_sizes/font_size = 10
+text = "Drag worker here"
+horizontal_alignment = 1
+
+[node name="Workstation" type="Panel" parent="." unique_id=200831711]
+layout_mode = 0
+offset_right = 138.0
+offset_bottom = 138.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_table")
+
+[node name="WorkstationSprite" type="TextureRect" parent="Workstation" unique_id=59515338]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -40.0
+offset_top = -16.0
+offset_right = 98.0
+offset_bottom = 122.0
+mouse_filter = 2
+stretch_mode = 5
+
+[node name="StatusLabel" type="Label" parent="Workstation" unique_id=960373988]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 20.0
+offset_right = 150.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 12
+text = "No worker"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="Workstation" unique_id=2114982976]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 98.0
+offset_right = 150.0
+offset_bottom = 118.0
+mouse_filter = 2
+show_percentage = false

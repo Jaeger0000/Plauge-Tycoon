@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/supply/forest_node.gd" id="1_script"]
+
+[node name="ForestNode" type="Control"]
+custom_minimum_size = Vector2(120, 100)
+offset_right = 120.0
+offset_bottom = 100.0
+script = ExtResource("1_script")
+
+[node name="BgRect" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_right = 120.0
+offset_bottom = 100.0
+mouse_filter = 2
+color = Color(0.2, 0.5, 0.2, 1)
+
+[node name="StockLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_right = 120.0
+offset_bottom = 100.0
+mouse_filter = 2
+text = "Forest: 10/10"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 13
+
+[node name="RegenTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 3.0
+autostart = false

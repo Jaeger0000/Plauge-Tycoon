@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://3daergqf28sb"]
+
+[ext_resource type="Script" uid="uid://ccd6bsfute523" path="res://scenes/factory/machine_slot.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot"]
+bg_color = Color(0.12, 0.12, 0.15, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.3, 0.3, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="MachineSlot" type="Panel" unique_id=1552341591]
+custom_minimum_size = Vector2(128, 128)
+offset_right = 128.0
+offset_bottom = 128.0
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+script = ExtResource("1_script")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1494999519]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="VBox" unique_id=1964190509]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "EMPTY SLOT"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBox" unique_id=209862729]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="StatusLabel" type="Label" parent="VBox" unique_id=442145662]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Drag machine here"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="VBox" unique_id=1255546144]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+mouse_filter = 2
+show_percentage = false
+
+[node name="TypeLabel" type="Label" parent="VBox" unique_id=1750366575]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1

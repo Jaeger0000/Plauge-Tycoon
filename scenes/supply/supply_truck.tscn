@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/supply/supply_truck.gd" id="1_script"]
+
+[node name="SupplyTruck" type="Control"]
+custom_minimum_size = Vector2(50, 30)
+offset_right = 50.0
+offset_bottom = 30.0
+script = ExtResource("1_script")
+
+[node name="BgRect" type="ColorRect" parent="."]
+unique_name_in_owner = true
+offset_right = 50.0
+offset_bottom = 30.0
+mouse_filter = 2
+color = Color(0.9, 0.85, 0.2, 1)
+
+[node name="CargoLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_right = 50.0
+offset_bottom = 30.0
+mouse_filter = 2
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12

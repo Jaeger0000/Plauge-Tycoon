@@ -1,0 +1,146 @@
+[gd_scene format=3 uid="uid://do3ppjkmwh57g"]
+
+[ext_resource type="Script" uid="uid://cb1oem4d1wcfh" path="res://scenes/game_map/game_map.gd" id="1_game_map"]
+[ext_resource type="Script" uid="uid://ddeccsw7x01xy" path="res://scenes/game_map/hud.gd" id="2_hud"]
+[ext_resource type="PackedScene" uid="uid://dlipiw3bjab2w" path="res://scenes/factory/factory_zone.tscn" id="3_factory"]
+[ext_resource type="PackedScene" path="res://scenes/distribution/distribution_zone.tscn" id="4_distribution"]
+[ext_resource type="PackedScene" path="res://scenes/supply/supply_zone.tscn" id="5_supply"]
+
+[node name="GameMap" type="Node2D" unique_id=441478896]
+script = ExtResource("1_game_map")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1948618513]
+position = Vector2(960, 540)
+position_smoothing_enabled = true
+
+[node name="SupplyZoneBG" type="ColorRect" parent="." unique_id=2089065050]
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.15, 0.25, 0.15, 1)
+
+[node name="FactoryZoneBG" type="ColorRect" parent="." unique_id=1616402615]
+offset_left = 1920.0
+offset_right = 3840.0
+offset_bottom = 1080.0
+color = Color(0.25, 0.18, 0.12, 1)
+
+[node name="DistributionZoneBG" type="ColorRect" parent="." unique_id=1443769288]
+offset_left = 3840.0
+offset_right = 5760.0
+offset_bottom = 1080.0
+color = Color(0.15, 0.15, 0.25, 1)
+
+[node name="SupplyZoneTitle" type="Label" parent="." unique_id=516487643]
+offset_left = 760.0
+offset_top = 40.0
+offset_right = 1160.0
+offset_bottom = 80.0
+text = "SUPPLY ZONE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FactoryZoneTitle" type="Label" parent="." unique_id=1343162117]
+offset_left = 2680.0
+offset_top = 40.0
+offset_right = 3080.0
+offset_bottom = 80.0
+text = "FACTORY ZONE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DistributionZoneTitle" type="Label" parent="." unique_id=1021188502]
+offset_left = 4600.0
+offset_top = 40.0
+offset_right = 5000.0
+offset_bottom = 80.0
+text = "DISTRIBUTION ZONE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SupplyZone" parent="." unique_id=689359504 instance=ExtResource("5_supply")]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+
+[node name="FactoryZone" parent="." unique_id=1223238780 instance=ExtResource("3_factory")]
+unique_name_in_owner = true
+offset_left = 1920.0
+offset_right = 3840.0
+
+[node name="DistributionZone" parent="." unique_id=690736610 instance=ExtResource("4_distribution")]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = 3840.0
+offset_right = 5760.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1825642675]
+script = ExtResource("2_hud")
+
+[node name="TimerLabel" type="Label" parent="HUD" unique_id=311408080]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = 10.0
+offset_right = 60.0
+offset_bottom = 50.0
+text = "5:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="HUD" unique_id=2087716307]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 50.0
+text = "Furniture Delivered: 0"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ZoneLabel" type="Label" parent="HUD" unique_id=1294287425]
+unique_name_in_owner = true
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 300.0
+offset_bottom = 50.0
+text = "Supply Zone"
+vertical_alignment = 1
+
+[node name="LeftArrow" type="Button" parent="HUD" unique_id=1053125394]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.5)
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -100.0
+offset_right = 90.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 48
+text = "<"
+
+[node name="RightArrow" type="Button" parent="HUD" unique_id=2097548591]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.5)
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = -100.0
+offset_right = -10.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 48
+text = ">"
+
+[node name="GameTimer" type="Timer" parent="." unique_id=1750984276]
+unique_name_in_owner = true
+wait_time = 300.0
+one_shot = true
