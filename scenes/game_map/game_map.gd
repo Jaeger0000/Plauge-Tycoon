@@ -10,7 +10,7 @@ const PAN_SPEED := 5.0
 const STARTING_BUDGET := 1000
 
 var furniture_delivered: int = 0
-var time_remaining: float = 30.0
+var time_remaining: float = 60.0
 var is_dragging: bool = false
 var drag_start: Vector2 = Vector2.ZERO
 var target_camera_x: float = 960.0
@@ -217,6 +217,14 @@ func _request_all_optimal_solutions() -> void:
 	)
 
 	# 4. TSP
+	# For optimal TSP, use the total items available for packing as potential crates
+	# (the packing solver will determine how many crates can be made optimally)
+	# Estimate: each item occupies at least w*h cells in a 6x6 grid (36 cells)
+	var total_item_area := 0
+	for item in packing_items:
+		total_item_area += item["w"] * item["h"]
+	var estimated_crates := maxi(int(ceil(float(total_item_area) / 36.0)), distribution_zone.depot.crate_count)
+
 	var depot_pos: Vector2 = distribution_zone.depot.global_position + distribution_zone.depot.size / 2.0
 	var shop_data: Array = []
 	for shop in distribution_zone.shops:
@@ -229,7 +237,7 @@ func _request_all_optimal_solutions() -> void:
 	SolverClient.solve_tsp(
 		depot_pos, shop_data,
 		distribution_zone.TRUCK_CAPACITY,
-		distribution_zone.depot.crate_count
+		estimated_crates
 	)
 
 
