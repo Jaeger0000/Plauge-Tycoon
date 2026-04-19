@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dmbrdg7bonxg4"]
 
 [ext_resource type="Script" uid="uid://cw6urar8pjqd1" path="res://scenes/factory/conveyor_belt.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://dhck3pfyuavui" path="res://icon.svg" id="2_jp7xv"]
 
 [node name="ConveyorBelt" type="Control" unique_id=266032329]
 layout_mode = 3
@@ -10,8 +9,3 @@ offset_right = 80.0
 offset_bottom = 500.0
 mouse_filter = 2
 script = ExtResource("1_script")
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2607916]
-position = Vector2(39, 248)
-scale = Vector2(0.609375, 3.875)
-texture = ExtResource("2_jp7xv")

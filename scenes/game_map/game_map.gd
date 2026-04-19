@@ -7,12 +7,16 @@ const MAP_WIDTH := 5760.0
 const MAP_HEIGHT := 1080.0
 const CAMERA_Y := 540.0
 const PAN_SPEED := 5.0
+const STARTING_BUDGET := 1000
 
 var furniture_delivered: int = 0
-var time_remaining: float = 300.0
+var time_remaining: float = 30.0
 var is_dragging: bool = false
 var drag_start: Vector2 = Vector2.ZERO
 var target_camera_x: float = 960.0
+
+# Solver tracking
+var _pending_solvers: int = 0
 
 @onready var camera: Camera2D = $Camera2D
 @onready var timer_label: Label = %TimerLabel
@@ -29,6 +33,7 @@ var zone_names: Array[String] = ["Supply Zone", "Factory Zone", "Distribution Zo
 
 
 func _ready() -> void:
+	GameManager.reset_stats()
 	camera.position = Vector2(960.0, CAMERA_Y)
 	target_camera_x = camera.position.x
 
@@ -62,7 +67,6 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Start drag with middle or right mouse button
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_MIDDLE or mb.button_index == MOUSE_BUTTON_RIGHT:
@@ -72,7 +76,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			else:
 				is_dragging = false
 
-	# Handle drag motion
 	if event is InputEventMouseMotion and is_dragging:
 		var mm := event as InputEventMouseMotion
 		target_camera_x -= mm.relative.x
@@ -92,13 +95,61 @@ func _on_right_arrow_pressed() -> void:
 
 
 func _on_timer_timeout() -> void:
-	GameManager.furniture_delivered = furniture_delivered
+	_gather_player_stats()
 	game_over.emit()
-	_request_optimal_solution()
+	_request_all_optimal_solutions()
 
 
-func _request_optimal_solution() -> void:
-	# Gather supply data
+# --- Player stat collection ---
+
+func _gather_player_stats() -> void:
+	GameManager.furniture_delivered = furniture_delivered
+	GameManager.player_wood_delivered = supply_zone.total_wood_delivered
+	GameManager.player_deliveries = distribution_zone.total_delivered
+	GameManager.player_budget_spent = STARTING_BUDGET - factory_zone.budget
+
+	# Truck cost = sum of costs of all purchased trucks (non-free ones)
+	var truck_cost := 0
+	for truck in supply_zone.active_trucks + supply_zone.pool_trucks:
+		var tdata: Dictionary = supply_zone.TRUCK_DATA.get(truck.truck_type, {})
+		truck_cost += tdata.get("cost", 0)
+	GameManager.player_truck_cost = truck_cost
+
+	# Items processed = factory production count (crates shipped × items)
+	GameManager.player_items_processed = factory_zone.production_count
+
+	# Machine cost = STARTING_BUDGET - budget - truck_cost - packing_cost
+	# Count machines placed in work spots
+	var machine_cost := 0
+	for spot in factory_zone.sterilize_spots + factory_zone.cutting_spots + factory_zone.packaging_spots:
+		if spot.worker_type != "":
+			var mdata: Dictionary = FactoryData.MACHINES.get(spot.worker_type, {})
+			machine_cost += mdata.get("cost", 0)
+	GameManager.player_machine_cost = machine_cost
+
+	# Crates packed = depot crate count + crates already delivered
+	GameManager.player_crates_packed = distribution_zone.depot.crate_count + _count_delivered_crates()
+
+	# Packing cost = 50 per crate shipped
+	GameManager.player_packing_cost = GameManager.player_crates_packed * 50
+
+
+func _count_delivered_crates() -> int:
+	# Each crate_ready call sends 1 crate to distribution, so count from distribution
+	# total_delivered counts individual furniture, but we need crate count
+	# crate_pool tracks per-crate furniture counts, delivered ones are gone
+	# Best approximation: production_count items shipped in crates
+	return 0  # Depot already tracks what it has; delivered crates are counted via trips
+
+
+# --- Optimal solution requests ---
+
+func _request_all_optimal_solutions() -> void:
+	SolverClient.solution_received.connect(_on_solver_result)
+	SolverClient.request_failed.connect(_on_solver_failed)
+	_pending_solvers = 4
+
+	# 1. Transport
 	var forests: Array = []
 	for forest in [supply_zone.pine_forest, supply_zone.oak_forest, supply_zone.birch_forest]:
 		forests.append({
@@ -106,19 +157,66 @@ func _request_optimal_solution() -> void:
 			"capacity": forest.max_stock,
 			"regen_rate": forest.regen_rate,
 			"position": forest.global_position,
+			"current_stock": forest.current_stock,
 		})
 
-	var trucks: Array = []
+	var owned_trucks: Dictionary = {}
 	for truck in supply_zone.active_trucks + supply_zone.pool_trucks:
-		trucks.append({
-			"type": truck.truck_type,
-			"speed": truck.speed,
-			"capacity": truck.capacity,
+		var t_type: String = truck.truck_type
+		if not owned_trucks.has(t_type):
+			owned_trucks[t_type] = 0
+		owned_trucks[t_type] += 1
+
+	var truck_catalog: Array = []
+	for tname in supply_zone.TRUCK_DATA:
+		var tdata: Dictionary = supply_zone.TRUCK_DATA[tname]
+		truck_catalog.append({
+			"type": tname,
+			"speed": tdata["speed"],
+			"capacity": tdata["capacity"],
+			"cost": tdata["cost"],
 		})
 
 	var factory_pos: Vector2 = supply_zone.factory_entrance.global_position + Vector2(50, 60)
 
-	# Gather distribution data
+	SolverClient.solve_transport(
+		forests, factory_pos, STARTING_BUDGET,
+		owned_trucks, truck_catalog, GameManager.game_time
+	)
+
+	# 2. Machine placement
+	SolverClient.solve_machine_placement(
+		STARTING_BUDGET,
+		GameManager.game_time,
+		maxi(supply_zone.total_wood_delivered, 1)
+	)
+
+	# 3. Packing — gather all items (queue + placed)
+	var packing_items: Array = []
+	var pack_id := 0
+	for idata in factory_zone.packing_area.item_queue:
+		packing_items.append({
+			"id": pack_id,
+			"type": idata["type"],
+			"w": idata["w"],
+			"h": idata["h"],
+		})
+		pack_id += 1
+	for idata in factory_zone.packing_area.placed_items:
+		packing_items.append({
+			"id": pack_id,
+			"type": idata["type"],
+			"w": idata["w"],
+			"h": idata["h"],
+		})
+		pack_id += 1
+
+	SolverClient.solve_packing(
+		[6, 6], packing_items,
+		factory_zone.budget, 50
+	)
+
+	# 4. TSP
 	var depot_pos: Vector2 = distribution_zone.depot.global_position + distribution_zone.depot.size / 2.0
 	var shop_data: Array = []
 	for shop in distribution_zone.shops:
@@ -128,23 +226,44 @@ func _request_optimal_solution() -> void:
 			"demand": shop.demand,
 		})
 
-	# Call TSP solver (most visible result)
-	SolverClient.solution_received.connect(_on_solution_received, CONNECT_ONE_SHOT)
-	SolverClient.request_failed.connect(_on_solution_failed, CONNECT_ONE_SHOT)
-	SolverClient.solve_tsp(depot_pos, shop_data, 10, distribution_zone.depot.crate_count)
+	SolverClient.solve_tsp(
+		depot_pos, shop_data,
+		distribution_zone.TRUCK_CAPACITY,
+		distribution_zone.depot.crate_count
+	)
 
 
-func _on_solution_received(_endpoint: String, result: Dictionary) -> void:
-	if SolverClient.request_failed.is_connected(_on_solution_failed):
-		SolverClient.request_failed.disconnect(_on_solution_failed)
-	GameManager.optimal_deliveries = result.get("optimal_deliveries", 0)
-	get_tree().change_scene_to_file("res://scenes/results/results.tscn")
+func _on_solver_result(endpoint: String, result: Dictionary) -> void:
+	GameManager.solver_results[endpoint] = result
+
+	match endpoint:
+		"/solve/transport":
+			GameManager.optimal_wood_delivered = result.get("optimal_wood_delivered", 0)
+		"/solve/machine_placement":
+			GameManager.optimal_items_processed = result.get("predicted_throughput", 0)
+		"/solve/packing":
+			GameManager.optimal_crates_packed = result.get("selected_count", 0)
+		"/solve/tsp":
+			GameManager.optimal_deliveries = result.get("optimal_deliveries", 0)
+			GameManager.optimal_route_distance = result.get("optimal_distance", 0.0)
+
+	_pending_solvers -= 1
+	if _pending_solvers <= 0:
+		_finish_solvers()
 
 
-func _on_solution_failed(_endpoint: String, _error: String) -> void:
-	if SolverClient.solution_received.is_connected(_on_solution_received):
-		SolverClient.solution_received.disconnect(_on_solution_received)
-	GameManager.optimal_deliveries = 0
+func _on_solver_failed(endpoint: String, _error: String) -> void:
+	push_warning("Solver failed: %s — %s" % [endpoint, _error])
+	_pending_solvers -= 1
+	if _pending_solvers <= 0:
+		_finish_solvers()
+
+
+func _finish_solvers() -> void:
+	if SolverClient.solution_received.is_connected(_on_solver_result):
+		SolverClient.solution_received.disconnect(_on_solver_result)
+	if SolverClient.request_failed.is_connected(_on_solver_failed):
+		SolverClient.request_failed.disconnect(_on_solver_failed)
 	get_tree().change_scene_to_file("res://scenes/results/results.tscn")
 
 

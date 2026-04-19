@@ -1,28 +1,124 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://bhenc61e4ytwu"]
 
-[ext_resource type="Script" path="res://scenes/distribution/distribution_zone.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dsejm7fbqrqg7" path="res://scenes/distribution/distribution_zone.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dic4a4hxo8nng" path="res://sprites/map_2.png" id="2_map"]
+[ext_resource type="PackedScene" path="res://scenes/distribution/depot_node.tscn" id="3_depot"]
+[ext_resource type="PackedScene" path="res://scenes/distribution/shop_node.tscn" id="4_shop"]
+[ext_resource type="Script" path="res://scenes/distribution/route_draw.gd" id="5_route_draw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
 bg_color = Color(0.1, 0.1, 0.15, 0.9)
 border_width_top = 2
 border_color = Color(0.3, 0.3, 0.5, 1)
 
-[node name="DistributionZone" type="Control"]
+[node name="DistributionZone" type="Control" unique_id=966053215]
 custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 3
+anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
 script = ExtResource("1_script")
 
-[node name="InfoPanel" type="Panel" parent="."]
-offset_left = 0.0
+[node name="Background" type="TextureRect" parent="." unique_id=268899265]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("2_map")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="RouteDraw" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+script = ExtResource("5_route_draw")
+
+[node name="Depot" parent="." unique_id=159076484 instance=ExtResource("3_depot")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 150.0
+offset_top = 460.0
+offset_right = 230.0
+offset_bottom = 540.0
+
+[node name="Market" parent="." unique_id=1179227891 instance=ExtResource("4_shop")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 496.0
+offset_top = 158.0
+offset_right = 556.0
+offset_bottom = 218.0
+shop_name = "Eternal Rest"
+demand = 3
+shop_color = Color(0.9, 0.3, 0.3, 1)
+
+[node name="Boutique" parent="." unique_id=1859780757 instance=ExtResource("4_shop")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 728.0
+offset_top = 440.0
+offset_right = 788.0
+offset_bottom = 500.0
+shop_name = "Whispering Pines"
+shop_color = Color(0.9, 0.5, 0.8, 1)
+
+[node name="FurnitureStore" parent="." unique_id=1579686293 instance=ExtResource("4_shop")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 1440.0
+offset_top = 208.0
+offset_right = 1500.0
+offset_bottom = 268.0
+shop_name = "Shadow Valley"
+demand = 4
+shop_color = Color(0.3, 0.6, 0.9, 1)
+
+[node name="OfficeSupply" parent="." unique_id=1500701051 instance=ExtResource("4_shop")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 480.0
+offset_top = 762.0
+offset_right = 540.0
+offset_bottom = 822.0
+shop_name = "Hollow Ground"
+shop_color = Color(0.9, 0.8, 0.2, 1)
+
+[node name="HomeDepot" parent="." unique_id=635686958 instance=ExtResource("4_shop")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 1456.0
+offset_top = 578.0
+offset_right = 1516.0
+offset_bottom = 638.0
+shop_name = "Raven Hill"
+demand = 3
+shop_color = Color(0.3, 0.8, 0.4, 1)
+
+[node name="CornerShop" parent="." unique_id=822965581 instance=ExtResource("4_shop")]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 1160.0
+offset_top = 776.0
+offset_right = 1220.0
+offset_bottom = 836.0
+shop_name = "Iron Gate"
+demand = 1
+shop_color = Color(0.7, 0.5, 0.3, 1)
+
+[node name="InfoPanel" type="Panel" parent="." unique_id=858716756]
+layout_mode = 0
 offset_top = 980.0
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_info")
 
-[node name="HBox" type="HBoxContainer" parent="InfoPanel"]
+[node name="HBox" type="HBoxContainer" parent="InfoPanel" unique_id=1735069840]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 10.0
 offset_right = 1900.0
@@ -30,37 +126,42 @@ offset_bottom = 90.0
 mouse_filter = 2
 theme_override_constants/separation = 20
 
-[node name="CrateLabel" type="Label" parent="InfoPanel/HBox"]
+[node name="CrateLabel" type="Label" parent="InfoPanel/HBox" unique_id=1913946897]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
 text = "Available Crates: 0"
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 18
 
-[node name="RouteLabel" type="Label" parent="InfoPanel/HBox"]
+[node name="RouteLabel" type="Label" parent="InfoPanel/HBox" unique_id=943703791]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
 text = "Click DEPOT to start route"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 18
 
-[node name="DeliveredLabel" type="Label" parent="InfoPanel/HBox"]
+[node name="DeliveredLabel" type="Label" parent="InfoPanel/HBox" unique_id=2003723999]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
 text = "Total Delivered: 0"
 horizontal_alignment = 2
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 18
 
-[node name="SendButton" type="Button" parent="InfoPanel/HBox"]
+[node name="SendButton" type="Button" parent="InfoPanel/HBox" unique_id=1486485960]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "SEND TRUCK"
-theme_override_font_sizes/font_size = 16
 
-[node name="ClearButton" type="Button" parent="InfoPanel/HBox"]
+[node name="ClearButton" type="Button" parent="InfoPanel/HBox" unique_id=2030587187]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
-text = "CLEAR ROUTE"
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
+text = "CLEAR ROUTE"

@@ -1,9 +1,20 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3 uid="uid://cqcpsbpkjevb0"]
 
-[ext_resource type="Script" path="res://scenes/supply/supply_zone.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bef7ywkvdr8db" path="res://scenes/supply/supply_zone.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/supply/forest_node.tscn" id="2_forest"]
 [ext_resource type="PackedScene" path="res://scenes/supply/factory_entrance.tscn" id="3_entrance"]
-[ext_resource type="Script" path="res://scenes/supply/routes_node.gd" id="4_routes"]
+[ext_resource type="Script" uid="uid://dqalu7si537fw" path="res://scenes/supply/routes_node.gd" id="4_routes"]
+[ext_resource type="Texture2D" uid="uid://cwki3glsv81dq" path="res://sprites/map.png" id="5_map"]
+[ext_resource type="Shader" path="res://shaders/crt.gdshader" id="6_crt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
+shader = ExtResource("6_crt")
+shader_parameter/scanline_strength = 0.06
+shader_parameter/scanline_frequency = 3.0
+shader_parameter/vignette_strength = 0.12
+shader_parameter/chromatic_aberration = 0.3
+shader_parameter/flicker_strength = 0.008
+shader_parameter/curvature = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shop"]
 bg_color = Color(0.1, 0.1, 0.13, 0.9)
@@ -29,121 +40,154 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="SupplyZone" type="Control"]
+[node name="SupplyZone" type="Control" unique_id=2097697261]
 custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 3
+anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
 script = ExtResource("1_script")
 
-[node name="RoutesNode" type="Control" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1462487974]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+texture = ExtResource("5_map")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="RoutesNode" type="Control" parent="." unique_id=1484984754]
 unique_name_in_owner = true
+anchors_preset = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 mouse_filter = 2
 script = ExtResource("4_routes")
 
-[node name="PineForest" parent="." instance=ExtResource("2_forest")]
+[node name="PineForest" parent="." unique_id=1957603436 instance=ExtResource("2_forest")]
 unique_name_in_owner = true
-offset_left = 140.0
-offset_top = 150.0
-offset_right = 260.0
-offset_bottom = 250.0
-forest_name = "Pine"
+anchors_preset = 0
+offset_left = 144.0
+offset_top = 136.0
+offset_right = 264.0
+offset_bottom = 236.0
+forest_name = "Metropol"
 max_stock = 12
-regen_rate = 3.0
 forest_color = Color(0.15, 0.45, 0.15, 1)
 
-[node name="OakForest" parent="." instance=ExtResource("2_forest")]
+[node name="OakForest" parent="." unique_id=1192205401 instance=ExtResource("2_forest")]
 unique_name_in_owner = true
-offset_left = 140.0
-offset_top = 490.0
-offset_right = 260.0
-offset_bottom = 590.0
-forest_name = "Oak"
-max_stock = 10
+anchors_preset = 0
+offset_left = 168.0
+offset_top = 440.0
+offset_right = 288.0
+offset_bottom = 540.0
+forest_name = "Town"
 regen_rate = 4.0
 forest_color = Color(0.35, 0.42, 0.18, 1)
 
-[node name="BirchForest" parent="." instance=ExtResource("2_forest")]
+[node name="BirchForest" parent="." unique_id=2051786828 instance=ExtResource("2_forest")]
 unique_name_in_owner = true
-offset_left = 140.0
-offset_top = 800.0
-offset_right = 260.0
-offset_bottom = 900.0
-forest_name = "Birch"
+anchors_preset = 0
+offset_left = 168.0
+offset_top = 808.0
+offset_right = 288.0
+offset_bottom = 908.0
+forest_name = "Village"
 max_stock = 8
 regen_rate = 2.0
 forest_color = Color(0.45, 0.65, 0.3, 1)
 
-[node name="FactoryEntrance" parent="." instance=ExtResource("3_entrance")]
+[node name="FactoryEntrance" parent="." unique_id=463162825 instance=ExtResource("3_entrance")]
 unique_name_in_owner = true
+anchors_preset = 0
 offset_left = 1650.0
 offset_top = 480.0
 offset_right = 1750.0
 offset_bottom = 600.0
 
-[node name="InfoBar" type="HBoxContainer" parent="."]
+[node name="InfoBar" type="HBoxContainer" parent="." unique_id=1308462786]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 10.0
 offset_right = 1900.0
 offset_bottom = 50.0
 
-[node name="DeliveredLabel" type="Label" parent="InfoBar"]
+[node name="DeliveredLabel" type="Label" parent="InfoBar" unique_id=1746196702]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
 text = "Wood Delivered: 0"
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 20
 
-[node name="ShopPanel" type="Panel" parent="."]
+[node name="ShopPanel" type="Panel" parent="." unique_id=1034432310]
+layout_mode = 0
 offset_left = 1550.0
 offset_top = 65.0
 offset_right = 1900.0
 offset_bottom = 440.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_shop")
 
-[node name="ShopTitle" type="Label" parent="ShopPanel"]
-offset_left = 0.0
+[node name="ShopTitle" type="Label" parent="ShopPanel" unique_id=840318683]
+layout_mode = 0
 offset_top = 8.0
 offset_right = 350.0
 offset_bottom = 35.0
+theme_override_font_sizes/font_size = 18
 text = "TRUCK SHOP"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 18
 
-[node name="ShopScroll" type="ScrollContainer" parent="ShopPanel"]
+[node name="ShopScroll" type="ScrollContainer" parent="ShopPanel" unique_id=814770236]
+layout_mode = 0
 offset_left = 5.0
 offset_top = 40.0
 offset_right = 345.0
 offset_bottom = 370.0
 horizontal_scroll_mode = 0
 
-[node name="ShopList" type="VBoxContainer" parent="ShopPanel/ShopScroll"]
+[node name="ShopList" type="VBoxContainer" parent="ShopPanel/ShopScroll" unique_id=941727059]
 unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 
-[node name="PoolPanel" type="Panel" parent="."]
+[node name="PoolPanel" type="Panel" parent="." unique_id=1211743631]
+layout_mode = 0
 offset_left = 20.0
 offset_top = 980.0
 offset_right = 1520.0
 offset_bottom = 1070.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_pool")
 
-[node name="PoolTitle" type="Label" parent="PoolPanel"]
+[node name="PoolTitle" type="Label" parent="PoolPanel" unique_id=2123612444]
+layout_mode = 0
 offset_left = 10.0
 offset_top = 2.0
 offset_right = 200.0
 offset_bottom = 22.0
-text = "Truck Pool (drag to forest)"
 theme_override_font_sizes/font_size = 12
+text = "Truck Pool (drag to forest)"
 
-[node name="TruckPool" type="HBoxContainer" parent="PoolPanel"]
+[node name="TruckPool" type="HBoxContainer" parent="PoolPanel" unique_id=2017216304]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 10.0
 offset_top = 25.0
 offset_right = 1490.0
 offset_bottom = 85.0
 theme_override_constants/separation = 10
+
+[node name="CRTOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_crt")
+color = Color(1, 1, 1, 0)

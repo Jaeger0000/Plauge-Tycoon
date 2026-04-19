@@ -11,9 +11,10 @@ var grid: Array = []
 var placed_items: Array = []
 var item_queue: Array = []
 var _next_id: int = 0
+var _queue_slots: Dictionary = {}  # furniture_type -> {slot, count_label}
 
 @onready var grid_panel: Control = %GridPanel
-@onready var queue_container: VBoxContainer = %QueueContainer
+@onready var queue_container: HBoxContainer = %QueueContainer
 @onready var ship_button: Button = %ShipButton
 @onready var crate_label: Label = %CrateLabel
 
@@ -22,6 +23,7 @@ func _ready() -> void:
 	_init_grid()
 	grid_panel.packing_area = self
 	ship_button.pressed.connect(_on_ship_pressed)
+	_build_queue_slots()
 
 
 func _init_grid() -> void:
@@ -53,42 +55,95 @@ func add_packaged_item(furniture_type: String) -> void:
 
 
 func _rebuild_queue_display() -> void:
-	for child in queue_container.get_children():
-		child.queue_free()
+	_update_queue_counts()
 
-	for i in range(item_queue.size()):
-		var idata: Dictionary = item_queue[i]
-		var panel := Panel.new()
-		panel.custom_minimum_size = Vector2(0, 48)
 
-		var pstyle := StyleBoxFlat.new()
-		pstyle.bg_color = idata["color"]
-		pstyle.corner_radius_top_left = 4
-		pstyle.corner_radius_top_right = 4
-		pstyle.corner_radius_bottom_left = 4
-		pstyle.corner_radius_bottom_right = 4
-		pstyle.content_margin_left = 10
-		pstyle.content_margin_right = 10
-		pstyle.content_margin_top = 4
-		pstyle.content_margin_bottom = 4
-		panel.add_theme_stylebox_override("panel", pstyle)
+func _build_queue_slots() -> void:
+	for furniture_type in FactoryData.FURNITURE:
+		var fdata: Dictionary = FactoryData.FURNITURE[furniture_type]
+		var sprites: Array = fdata.get("sprites", [])
+		var w: int = int(fdata["grid_w"])
+		var h: int = int(fdata["grid_h"])
 
-		var lbl := Label.new()
-		lbl.text = "%s  (%dx%d)" % [idata["type"], idata["w"], idata["h"]]
-		lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
-		lbl.offset_left = 10
-		lbl.offset_right = -10
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		lbl.add_theme_font_size_override("font_size", 14)
-		panel.add_child(lbl)
+		var slot := Control.new()
+		slot.custom_minimum_size = Vector2(w * CELL_SIZE, h * CELL_SIZE)
+		slot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+		# Grid background
+		var bg := ColorRect.new()
+		bg.color = Color(0.08, 0.08, 0.1, 1)
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(bg)
+
+		# Sprite
+		var icon := TextureRect.new()
+		if sprites.size() > 0:
+			icon.texture = load(sprites[0])
+		icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+		icon.offset_left = 2
+		icon.offset_top = 2
+		icon.offset_right = -2
+		icon.offset_bottom = -2
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(icon)
+
+		# Count badge at bottom right
+		var count_lbl := Label.new()
+		count_lbl.text = "x0"
+		count_lbl.add_theme_font_size_override("font_size", 13)
+		count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		count_lbl.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		count_lbl.offset_left = -40
+		count_lbl.offset_top = -20
+		count_lbl.offset_right = -4
+		count_lbl.offset_bottom = -2
+		count_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(count_lbl)
 
 		# Attach draggable script
-		panel.set_script(preload("res://scenes/factory/packing_queue_item.gd"))
-		panel.queue_index = i
-		panel.item_data = idata
-		panel.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		slot.set_script(preload("res://scenes/factory/packing_queue_item.gd"))
+		slot.item_data = {
+			"id": -1,
+			"type": furniture_type,
+			"w": w,
+			"h": h,
+			"color": fdata["color"],
+			"sprite": sprites[0] if sprites.size() > 0 else "",
+		}
+		slot.queue_index = 0
 
-		queue_container.add_child(panel)
+		queue_container.add_child(slot)
+		_queue_slots[furniture_type] = {"slot": slot, "count_label": count_lbl}
+
+	_update_queue_counts()
+
+
+func _update_queue_counts() -> void:
+	# Count items per type
+	var type_counts: Dictionary = {}
+	var type_first_id: Dictionary = {}
+	for idata in item_queue:
+		var t: String = idata["type"]
+		if not type_counts.has(t):
+			type_counts[t] = 0
+			type_first_id[t] = idata["id"]
+		type_counts[t] += 1
+
+	for furniture_type in _queue_slots:
+		var slot_data: Dictionary = _queue_slots[furniture_type]
+		var count: int = type_counts.get(furniture_type, 0)
+		slot_data["count_label"].text = "x%d" % count
+		# Update the item_data id to the first available item of this type
+		var slot: Control = slot_data["slot"]
+		if count > 0:
+			slot.item_data["id"] = type_first_id[furniture_type]
+			slot.modulate.a = 1.0
+		else:
+			slot.item_data["id"] = -1
+			slot.modulate.a = 0.5
 
 
 func has_queue_item(item_id: int) -> bool:

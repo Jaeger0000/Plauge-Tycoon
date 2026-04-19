@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://dlipiw3bjab2w"]
 
 [ext_resource type="Script" uid="uid://cstoxtkk7wopt" path="res://scenes/factory/factory_zone.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c1tgu75jumwl0" path="res://sprites/main_2.png" id="2_4rrhb"]
 [ext_resource type="PackedScene" uid="uid://dmbrdg7bonxg4" path="res://scenes/factory/conveyor_belt.tscn" id="2_conveyor"]
 [ext_resource type="PackedScene" uid="uid://bk2c34k2f0y15" path="res://scenes/factory/work_spot.tscn" id="3_slot"]
 [ext_resource type="PackedScene" uid="uid://cad462u4lvi5j" path="res://scenes/factory/packing_area.tscn" id="4_packing"]
-[ext_resource type="Texture2D" uid="uid://dc2men4q53rtw" path="res://sprites/bg.png" id="5_bg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stage"]
 bg_color = Color(0.13, 0.13, 0.16, 0.85)
@@ -49,7 +49,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("5_bg")
+texture = ExtResource("2_4rrhb")
 expand_mode = 1
 stretch_mode = 6
 
@@ -294,6 +294,10 @@ mouse_filter = 2
 [node name="PackingArea" parent="PackingPanel" unique_id=1674341109 instance=ExtResource("4_packing")]
 unique_name_in_owner = true
 layout_mode = 0
+offset_left = -204.0
+offset_top = 30.0
+offset_right = 618.0
+offset_bottom = 454.0
 
 [node name="SpawnTimer" type="Timer" parent="." unique_id=1906440850]
 unique_name_in_owner = true

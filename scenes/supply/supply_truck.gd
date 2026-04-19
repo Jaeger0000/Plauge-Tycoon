@@ -19,13 +19,50 @@ var load_timer: float = 0.0
 const LOAD_TIME := 0.5
 const UNLOAD_TIME := 0.3
 
-@onready var bg_rect: ColorRect = %BgRect
+const TRUCK_SHEETS := {
+	"Small": "res://sprites/truck_1.png",
+	"Medium": "res://sprites/truck_2.png",
+	"Large": "res://sprites/truck_3.png",
+}
+const FRAME_SIZE := 192
+const ANIM_FPS := 6.0
+const DOT_RADIUS := 6.0
+const SPRITE_SCALE := 0.45
+
+var _frames: Array[AtlasTexture] = []
+var _frame_index: int = 0
+var _anim_timer: float = 0.0
+
 @onready var cargo_label: Label = %CargoLabel
 
 
 func _ready() -> void:
-	bg_rect.color = truck_color
+	# Load spritesheet frames
+	var sheet_path: String = TRUCK_SHEETS.get(truck_type, TRUCK_SHEETS["Small"])
+	var sheet: Texture2D = load(sheet_path)
+	for i in 4:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = sheet
+		atlas.region = Rect2(i * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
+		_frames.append(atlas)
 	_update_label()
+
+
+func _draw() -> void:
+	# Draw bordered dot at bottom center
+	var dot_center := Vector2(size.x / 2.0, size.y - DOT_RADIUS - 1.0)
+	draw_circle(dot_center, DOT_RADIUS, truck_color)
+	draw_arc(dot_center, DOT_RADIUS, 0, TAU, 24, Color.WHITE, 1.5)
+
+	# Draw animated sprite above the dot, bottom center aligned
+	if _frames.size() > 0:
+		var tex: AtlasTexture = _frames[_frame_index]
+		var draw_size := Vector2(FRAME_SIZE * SPRITE_SCALE, FRAME_SIZE * SPRITE_SCALE)
+		var draw_pos := Vector2(
+			dot_center.x - draw_size.x / 2.0,
+			dot_center.y - DOT_RADIUS - draw_size.y
+		)
+		draw_texture_rect(tex, Rect2(draw_pos, draw_size), false)
 
 
 func assign_to_forest(forest: Control, factory_pos: Vector2) -> void:
@@ -43,13 +80,25 @@ func unassign() -> void:
 	_update_label()
 
 
+func _get_dot_global_pos() -> Vector2:
+	return global_position + Vector2(size.x / 2.0, size.y - DOT_RADIUS - 1.0)
+
+
 func _process(delta: float) -> void:
+	# Animate sprite
+	if state != State.IDLE and _frames.size() > 0:
+		_anim_timer += delta
+		if _anim_timer >= 1.0 / ANIM_FPS:
+			_anim_timer -= 1.0 / ANIM_FPS
+			_frame_index = (_frame_index + 1) % _frames.size()
+			queue_redraw()
+
 	match state:
 		State.IDLE:
 			return
 		State.DRIVING_TO_FOREST:
 			_move_toward(forest_target, delta)
-			if global_position.distance_to(forest_target) < 5.0:
+			if _get_dot_global_pos().distance_to(forest_target) < 5.0:
 				state = State.LOADING
 				load_timer = LOAD_TIME
 		State.LOADING:
@@ -65,7 +114,7 @@ func _process(delta: float) -> void:
 					load_timer = 0.5
 		State.DRIVING_TO_FACTORY:
 			_move_toward(factory_target, delta)
-			if global_position.distance_to(factory_target) < 5.0:
+			if _get_dot_global_pos().distance_to(factory_target) < 5.0:
 				state = State.UNLOADING
 				load_timer = UNLOAD_TIME
 		State.UNLOADING:
@@ -79,10 +128,13 @@ func _process(delta: float) -> void:
 
 
 func _move_toward(target: Vector2, delta: float) -> void:
-	var dir := (target - global_position).normalized()
+	# Offset so the dot (bottom-center) sits on the target point
+	var dot_offset := Vector2(size.x / 2.0, size.y - DOT_RADIUS - 1.0)
+	var adjusted_target := target - dot_offset
+	var dir := (adjusted_target - global_position).normalized()
 	var dist := speed * delta
-	if global_position.distance_to(target) <= dist:
-		global_position = target
+	if global_position.distance_to(adjusted_target) <= dist:
+		global_position = adjusted_target
 	else:
 		global_position += dir * dist
 
@@ -96,9 +148,9 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	if state != State.IDLE and state != State.DRIVING_TO_FOREST and state != State.LOADING:
 		# Only allow drag when idle or near forest
 		pass
-	# Create drag preview
+	# Create drag preview — small dot
 	var preview := ColorRect.new()
-	preview.size = Vector2(50, 30)
+	preview.size = Vector2(16, 16)
 	preview.color = truck_color
 	preview.modulate.a = 0.7
 	set_drag_preview(preview)
