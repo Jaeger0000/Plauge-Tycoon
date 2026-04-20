@@ -5,16 +5,6 @@
 [ext_resource type="PackedScene" path="res://scenes/supply/factory_entrance.tscn" id="3_entrance"]
 [ext_resource type="Script" uid="uid://dqalu7si537fw" path="res://scenes/supply/routes_node.gd" id="4_routes"]
 [ext_resource type="Texture2D" uid="uid://cwki3glsv81dq" path="res://sprites/map.png" id="5_map"]
-[ext_resource type="Shader" path="res://shaders/crt.gdshader" id="6_crt"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
-shader = ExtResource("6_crt")
-shader_parameter/scanline_strength = 0.06
-shader_parameter/scanline_frequency = 3.0
-shader_parameter/vignette_strength = 0.12
-shader_parameter/chromatic_aberration = 0.3
-shader_parameter/flicker_strength = 0.008
-shader_parameter/curvature = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shop"]
 bg_color = Color(0.1, 0.1, 0.13, 0.9)
@@ -180,14 +170,3 @@ offset_top = 25.0
 offset_right = 1490.0
 offset_bottom = 85.0
 theme_override_constants/separation = 10
-
-[node name="CRTOverlay" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-material = SubResource("ShaderMaterial_crt")
-color = Color(1, 1, 1, 0)
