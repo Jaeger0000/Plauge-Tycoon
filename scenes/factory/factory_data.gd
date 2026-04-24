@@ -11,8 +11,8 @@ const MACHINES := {
 const FURNITURE := {
 	"Chair": {"base_sterilize_time": 3.0, "base_cut_time": 4.0, "base_package_time": 2.0, "grid_w": 2, "grid_h": 2, "color": Color(0.65, 0.4, 0.2), "sprites": ["res://sprites/head.png"]},
 	"Table": {"base_sterilize_time": 5.0, "base_cut_time": 6.0, "base_package_time": 3.0, "grid_w": 3, "grid_h": 2, "color": Color(0.45, 0.28, 0.12), "sprites": ["res://sprites/torso.png"]},
-	"Shelf": {"base_sterilize_time": 2.0, "base_cut_time": 3.0, "base_package_time": 2.0, "grid_w": 1, "grid_h": 3, "color": Color(0.72, 0.55, 0.35), "sprites": ["res://sprites/leg_1.png", "res://sprites/leg_2.png"]},
-	"Stool": {"base_sterilize_time": 2.0, "base_cut_time": 2.0, "base_package_time": 1.0, "grid_w": 1, "grid_h": 2, "color": Color(0.55, 0.35, 0.18), "sprites": ["res://sprites/arm_1.png", "res://sprites/arm_2.png"]},
+	"Shelf": {"base_sterilize_time": 2.0, "base_cut_time": 3.0, "base_package_time": 2.0, "grid_w": 1, "grid_h": 3, "color": Color(0.72, 0.55, 0.35), "sprites": ["res://sprites/leg.png"]},
+	"Stool": {"base_sterilize_time": 2.0, "base_cut_time": 2.0, "base_package_time": 1.0, "grid_w": 1, "grid_h": 2, "color": Color(0.55, 0.35, 0.18), "sprites": ["res://sprites/arm.png"]},
 }
 
 const STAGE_RAW := 0

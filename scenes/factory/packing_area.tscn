@@ -26,6 +26,7 @@ offset_bottom = 158.0
 theme_override_font_sizes/font_size = 20
 text = "PACKING AREA"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="GridPanel" type="Control" parent="." unique_id=2122076840]
 unique_name_in_owner = true
@@ -39,9 +40,9 @@ script = ExtResource("2_grid")
 [node name="CrateLabel" type="Label" parent="." unique_id=2132100001]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 744.0
+offset_left = 745.0
 offset_top = 160.0
-offset_right = 1044.0
+offset_right = 1045.0
 offset_bottom = 185.0
 theme_override_font_sizes/font_size = 13
 text = "Crate (6x6) — drag items into grid"
@@ -65,6 +66,7 @@ offset_bottom = 78.0
 theme_override_font_sizes/font_size = 18
 text = "PACKAGED ITEMS QUEUE"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="QueueBg" type="Panel" parent="." unique_id=1523872440]
 show_behind_parent = true

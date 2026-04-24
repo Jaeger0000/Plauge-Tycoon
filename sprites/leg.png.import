@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://clryaegpogjw5"
-path="res://.godot/imported/arm_1.png-e96999c915494aaa2570d798487d1806.ctex"
+uid="uid://c6o4r1wjhb4wd"
+path="res://.godot/imported/leg.png-f4838e9672dd67590796f7e9658b09d4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/arm_1.png"
-dest_files=["res://.godot/imported/arm_1.png-e96999c915494aaa2570d798487d1806.ctex"]
+source_file="res://sprites/leg.png"
+dest_files=["res://.godot/imported/leg.png-f4838e9672dd67590796f7e9658b09d4.ctex"]
 
 [params]
 

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dlipiw3bjab2w"]
 
 [ext_resource type="Script" uid="uid://cstoxtkk7wopt" path="res://scenes/factory/factory_zone.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://c1tgu75jumwl0" path="res://sprites/main_2.png" id="2_4rrhb"]
+[ext_resource type="Texture2D" uid="uid://hmdsf6l14qmh" path="res://sprites/main_2.png" id="2_4rrhb"]
 [ext_resource type="PackedScene" uid="uid://dmbrdg7bonxg4" path="res://scenes/factory/conveyor_belt.tscn" id="2_conveyor"]
 [ext_resource type="PackedScene" uid="uid://bk2c34k2f0y15" path="res://scenes/factory/work_spot.tscn" id="3_slot"]
 [ext_resource type="PackedScene" uid="uid://cad462u4lvi5j" path="res://scenes/factory/packing_area.tscn" id="4_packing"]
@@ -102,6 +102,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_stage")
 
 [node name="SterilizeTitle" type="Label" parent="StagesArea/SterilizeGroup" unique_id=987511423]
+visible = false
 layout_mode = 0
 offset_top = 4.0
 offset_right = 312.0
@@ -156,6 +157,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_stage")
 
 [node name="CuttingTitle" type="Label" parent="StagesArea/CuttingGroup" unique_id=645556282]
+visible = false
 layout_mode = 0
 offset_top = 4.0
 offset_right = 318.0
@@ -210,6 +212,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_stage")
 
 [node name="PackagingTitle" type="Label" parent="StagesArea/PackagingGroup" unique_id=762399834]
+visible = false
 layout_mode = 0
 offset_right = 317.0
 offset_bottom = 28.0

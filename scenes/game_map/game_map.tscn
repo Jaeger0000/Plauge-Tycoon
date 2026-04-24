@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://cb1oem4d1wcfh" path="res://scenes/game_map/game_map.gd" id="1_game_map"]
 [ext_resource type="Script" uid="uid://ddeccsw7x01xy" path="res://scenes/game_map/hud.gd" id="2_hud"]
 [ext_resource type="PackedScene" uid="uid://dlipiw3bjab2w" path="res://scenes/factory/factory_zone.tscn" id="3_factory"]
-[ext_resource type="PackedScene" path="res://scenes/distribution/distribution_zone.tscn" id="4_distribution"]
-[ext_resource type="PackedScene" path="res://scenes/supply/supply_zone.tscn" id="5_supply"]
+[ext_resource type="PackedScene" uid="uid://bhenc61e4ytwu" path="res://scenes/distribution/distribution_zone.tscn" id="4_distribution"]
+[ext_resource type="PackedScene" uid="uid://cqcpsbpkjevb0" path="res://scenes/supply/supply_zone.tscn" id="5_supply"]
 
 [node name="GameMap" type="Node2D" unique_id=441478896]
 script = ExtResource("1_game_map")
@@ -59,8 +59,6 @@ vertical_alignment = 1
 
 [node name="SupplyZone" parent="." unique_id=689359504 instance=ExtResource("5_supply")]
 unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 0
 
 [node name="FactoryZone" parent="." unique_id=1223238780 instance=ExtResource("3_factory")]
 unique_name_in_owner = true
@@ -69,8 +67,6 @@ offset_right = 3840.0
 
 [node name="DistributionZone" parent="." unique_id=690736610 instance=ExtResource("4_distribution")]
 unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 0
 offset_left = 3840.0
 offset_right = 5760.0
 
@@ -92,6 +88,7 @@ vertical_alignment = 1
 
 [node name="ScoreLabel" type="Label" parent="HUD" unique_id=2087716307]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -99,16 +96,17 @@ offset_left = -300.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = 50.0
-text = "Furniture Delivered: 0"
+text = "Parts Delivered: 0"
 horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="ZoneLabel" type="Label" parent="HUD" unique_id=1294287425]
 unique_name_in_owner = true
+visible = false
 offset_left = 10.0
-offset_top = 10.0
+offset_top = 1.0
 offset_right = 300.0
-offset_bottom = 50.0
+offset_bottom = 41.0
 text = "Supply Zone"
 vertical_alignment = 1
 
