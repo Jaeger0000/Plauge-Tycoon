@@ -145,6 +145,14 @@ def _count_machines(stage_assignments: dict[str, list[str]]) -> int:
     return sum(len(stage_assignments.get(stage, [])) for stage in STAGES)
 
 
+def _minimum_feasible_machine_cost() -> int:
+    """Minimum budget required to place at least one machine per stage."""
+    if not MACHINE_DEFS:
+        return 0
+    min_machine_cost = min(int(v["cost"]) for v in MACHINE_DEFS.values())
+    return len(STAGES) * min_machine_cost
+
+
 def _score_plan(n_proc: int, machine_cost: int, machine_count: int, total_time: float) -> float:
     # Lexicographic preference:
     # 1) maximize packages
@@ -397,16 +405,28 @@ def solve_machine_placement(req: MachinePlacementRequest) -> MachinePlacementRes
             solver="none",
         )
 
+    # Infeasible budget: each sequential stage needs at least one machine.
+    min_required_budget = _minimum_feasible_machine_cost()
+    if req.budget < min_required_budget:
+        return _build_response(req, [], 0, 0.0, 0, "infeasible-budget")
+
+    # Infeasible time horizon.
+    if req.time_remaining <= 0:
+        return _build_response(req, [], 0, 0.0, 0, "infeasible-time")
+
     solver_name = "brute"
     try:
         assignments, machine_cost, proc_time, n_proc = _solve_brute(req)
         if not assignments:
-            raise ValueError("Brute-force returned empty solution")
+            return _build_response(req, [], 0, 0.0, 0, "infeasible-no-plan")
     except Exception as exc:
         logger.error(
             "Brute-force machine placement failed, using GAMSPy fallback: %s", exc, exc_info=True
         )
         assignments, machine_cost, proc_time, n_proc = _solve_gamspy(req)
         solver_name = "gamspy"
+
+    if not assignments:
+        return _build_response(req, [], 0, 0.0, 0, "infeasible-no-plan")
 
     return _build_response(req, assignments, machine_cost, proc_time, n_proc, solver_name)

@@ -8,7 +8,7 @@ var scores := {
 }
 
 var furniture_delivered: int = 0
-var game_time: float = 300.0
+var game_time: float = 60.0
 var optimal_deliveries: int = 0
 
 var backend_url := "http://localhost:8000"

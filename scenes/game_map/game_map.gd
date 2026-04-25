@@ -8,15 +8,16 @@ const MAP_HEIGHT := 1080.0
 const CAMERA_Y := 540.0
 const PAN_SPEED := 5.0
 const STARTING_BUDGET := 1000
+const OPT_MACHINE_MIN_BUDGET := 300
+const OPT_PACKING_MIN_BUDGET := 100
+const OPT_TRANSPORT_MAX_SHARE := 0.60
 
 var furniture_delivered: int = 0
-var time_remaining: float = 300.0
+var time_remaining: float = 60.0
 var is_dragging: bool = false
 var drag_start: Vector2 = Vector2.ZERO
 var target_camera_x: float = 960.0
-
-# Solver tracking
-var _pending_solvers: int = 0
+var _optimal_transport_budget_cap: int = 0
 
 @onready var camera: Camera2D = $Camera2D
 @onready var timer_label: Label = %TimerLabel
@@ -142,14 +143,21 @@ func _count_delivered_crates() -> int:
 	return 0  # Depot already tracks what it has; delivered crates are counted via trips
 
 
-# --- Optimal solution requests ---
+# --- Optimal solution requests (chained sequentially) ---
 
 func _request_all_optimal_solutions() -> void:
+	"""Chain all 4 solvers sequentially so each uses results from the previous."""
 	SolverClient.solution_received.connect(_on_solver_result)
 	SolverClient.request_failed.connect(_on_solver_failed)
-	_pending_solvers = 4
 
-	# 1. Transport
+	# Start the chain: Transport → Machine Placement → Packing → TSP
+	_request_optimal_transport()
+
+
+func _request_optimal_transport() -> void:
+	"""Step 1: Request optimal transport solution."""
+	print("[OptimalSolve] Starting TRANSPORT solver...")
+	
 	var forests: Array = []
 	for forest in [supply_zone.pine_forest, supply_zone.oak_forest, supply_zone.birch_forest]:
 		forests.append({
@@ -178,20 +186,46 @@ func _request_all_optimal_solutions() -> void:
 		})
 
 	var factory_pos: Vector2 = supply_zone.factory_entrance.global_position + Vector2(50, 60)
+	_optimal_transport_budget_cap = _compute_transport_budget_cap(STARTING_BUDGET)
+	print("[OptimalSolve] Budget policy => transport cap: %d, reserved for later: %d" % [
+		_optimal_transport_budget_cap,
+		STARTING_BUDGET - _optimal_transport_budget_cap
+	])
 
 	SolverClient.solve_transport(
-		forests, factory_pos, STARTING_BUDGET,
+		forests, factory_pos, _optimal_transport_budget_cap,
 		owned_trucks, truck_catalog, GameManager.game_time
 	)
 
-	# 2. Machine placement
+
+func _request_optimal_machine_placement() -> void:
+	"""Step 2: Request machine placement using transport results."""
+	print("[OptimalSolve] Starting MACHINE PLACEMENT solver...")
+	
+	# Use the wood delivered from transport as corpse_count
+	var wood_delivered = GameManager.optimal_wood_delivered
+	var transport_spent = mini(
+		int(GameManager.solver_results.get("/solve/transport", {}).get("total_truck_cost", 0)),
+		_optimal_transport_budget_cap
+	)
+	var budget_after_transport = maxi(0, STARTING_BUDGET - transport_spent)
+	var budget_remaining = maxi(0, budget_after_transport - OPT_PACKING_MIN_BUDGET)
+	if budget_remaining <= 0:
+		budget_remaining = budget_after_transport
+	print("[OptimalSolve] Budget after transport: %d, machine budget: %d" % [budget_after_transport, budget_remaining])
+	
 	SolverClient.solve_machine_placement(
-		STARTING_BUDGET,
+		budget_remaining,
 		GameManager.game_time,
-		maxi(supply_zone.total_wood_delivered, 1)
+		maxi(wood_delivered, 1)
 	)
 
-	# 3. Packing — gather all items (queue + placed)
+
+func _request_optimal_packing() -> void:
+	"""Step 3: Request packing using machine placement results."""
+	print("[OptimalSolve] Starting PACKING solver...")
+	
+	# Gather all items (queue + placed)
 	var packing_items: Array = []
 	var pack_id := 0
 	for idata in factory_zone.packing_area.item_queue:
@@ -211,19 +245,36 @@ func _request_all_optimal_solutions() -> void:
 		})
 		pack_id += 1
 
+	# Use the predicted throughput from machine placement
+	var mp_result = GameManager.solver_results.get("/solve/machine_placement", {})
+	var predicted_throughput = mp_result.get("predicted_throughput", 0)
+	
+	# Only include items up to the throughput limit
+	packing_items = packing_items.slice(0, predicted_throughput)
+	
+	var transport_spent = mini(
+		int(GameManager.solver_results.get("/solve/transport", {}).get("total_truck_cost", 0)),
+		_optimal_transport_budget_cap
+	)
+	var budget_after_transport = maxi(0, STARTING_BUDGET - transport_spent)
+	var budget_remaining = maxi(0, budget_after_transport - int(mp_result.get("total_machine_cost", 0)))
+	print("[OptimalSolve] Packing budget: %d" % budget_remaining)
+
 	SolverClient.solve_packing(
 		[6, 6], packing_items,
-		factory_zone.budget, 50
+		budget_remaining, 50
 	)
 
-	# 4. TSP
-	# For optimal TSP, use the total items available for packing as potential crates
-	# (the packing solver will determine how many crates can be made optimally)
-	# Estimate: each item occupies at least w*h cells in a 6x6 grid (36 cells)
-	var total_item_area := 0
-	for item in packing_items:
-		total_item_area += item["w"] * item["h"]
-	var estimated_crates := maxi(int(ceil(float(total_item_area) / 36.0)), distribution_zone.depot.crate_count)
+
+func _request_optimal_tsp() -> void:
+	"""Step 4: Request TSP delivery routing using packing results."""
+	print("[OptimalSolve] Starting TSP solver...")
+	
+	# Use the actual crate count from packing solver (not an estimate!)
+	var pack_result = GameManager.solver_results.get("/solve/packing", {})
+	var available_crates = pack_result.get("selected_count", 0)
+	
+	print("[OptimalSolve] TSP using %d crates from packing solver" % available_crates)
 
 	var depot_pos: Vector2 = distribution_zone.depot.global_position + distribution_zone.depot.size / 2.0
 	var shop_data: Array = []
@@ -237,8 +288,27 @@ func _request_all_optimal_solutions() -> void:
 	SolverClient.solve_tsp(
 		depot_pos, shop_data,
 		distribution_zone.TRUCK_CAPACITY,
-		estimated_crates
+		available_crates
 	)
+
+
+func _compute_transport_budget_cap(total_budget: int) -> int:
+	"""Reserve budget for later stages before transport optimization."""
+	if total_budget <= 0:
+		return 0
+
+	var reserve_for_later = OPT_MACHINE_MIN_BUDGET + OPT_PACKING_MIN_BUDGET
+	var cap_by_reserve = maxi(0, total_budget - reserve_for_later)
+	var cap_by_share = int(floor(float(total_budget) * OPT_TRANSPORT_MAX_SHARE))
+
+	# Use the stricter cap to preserve money for machine placement + packing.
+	var transport_cap = mini(cap_by_reserve, cap_by_share)
+
+	# If budget is too small for full reserve, still allow some transport spend.
+	if transport_cap <= 0:
+		transport_cap = maxi(0, int(floor(float(total_budget) / 3.0)))
+
+	return transport_cap
 
 
 func _on_solver_result(endpoint: String, result: Dictionary) -> void:
@@ -247,24 +317,35 @@ func _on_solver_result(endpoint: String, result: Dictionary) -> void:
 	match endpoint:
 		"/solve/transport":
 			GameManager.optimal_wood_delivered = result.get("optimal_wood_delivered", 0)
+			print("[OptimalSolve] Transport complete: %d wood delivered" % GameManager.optimal_wood_delivered)
+			# Chain to next: Machine Placement
+			_request_optimal_machine_placement()
+		
 		"/solve/machine_placement":
 			GameManager.optimal_items_processed = result.get("predicted_throughput", 0)
+			print("[OptimalSolve] Machine Placement complete: %d items processable" % GameManager.optimal_items_processed)
+			# Chain to next: Packing
+			_request_optimal_packing()
+		
 		"/solve/packing":
 			GameManager.optimal_crates_packed = result.get("selected_count", 0)
+			print("[OptimalSolve] Packing complete: %d crates" % GameManager.optimal_crates_packed)
+			# Chain to next: TSP
+			_request_optimal_tsp()
+		
 		"/solve/tsp":
 			GameManager.optimal_deliveries = result.get("optimal_deliveries", 0)
 			GameManager.optimal_route_distance = result.get("optimal_distance", 0.0)
+			print("[OptimalSolve] TSP complete: %d deliveries" % GameManager.optimal_deliveries)
+			# Chain complete! All solvers finished successfully
+			_finish_solvers()
 
-	_pending_solvers -= 1
-	if _pending_solvers <= 0:
-		_finish_solvers()
 
-
-func _on_solver_failed(endpoint: String, _error: String) -> void:
-	push_warning("Solver failed: %s — %s" % [endpoint, _error])
-	_pending_solvers -= 1
-	if _pending_solvers <= 0:
-		_finish_solvers()
+func _on_solver_failed(endpoint: String, error: String) -> void:
+	push_warning("[OptimalSolve] Solver failed at %s: %s" % [endpoint, error])
+	print("[OptimalSolve] Chain stopped at %s" % endpoint)
+	# Don't continue the chain if any solver fails
+	_finish_solvers()
 
 
 func _finish_solvers() -> void:
@@ -296,7 +377,7 @@ func _get_current_zone() -> int:
 
 
 func _update_timer_label() -> void:
-	var minutes := int(time_remaining) / 60
+	var minutes := int(floor(time_remaining / 60.0))
 	var seconds := int(time_remaining) % 60
 	timer_label.text = "%d:%02d" % [minutes, seconds]
 

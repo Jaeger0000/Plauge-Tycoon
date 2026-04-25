@@ -10,4 +10,5 @@ dependencies = [
     "pandas>=3.0.2",
     "pydantic>=2.13.2",
     "uvicorn[standard]>=0.44.0",
+    "structlog>=25.1.0",
 ]

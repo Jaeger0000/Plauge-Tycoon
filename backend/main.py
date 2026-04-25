@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from logging_service import RequestResponseLogger
 from routes import router
 
 app = FastAPI(
@@ -14,6 +15,9 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url="/openapi.json",
 )
+
+# Add request/response logging middleware
+app.add_middleware(RequestResponseLogger)
 
 app.add_middleware(
     CORSMiddleware,

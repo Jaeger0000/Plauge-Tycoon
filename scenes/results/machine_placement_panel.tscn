@@ -1,0 +1,88 @@
+[gd_scene format=3]
+
+[node name="MachineComparisonPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(1200, 400)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Optimal Machine Placement Strategy"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="ContentHBox" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StagesVBox" type="VBoxContainer" parent="VBoxContainer/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="SterilizeSection" type="VBoxContainer" parent="VBoxContainer/ContentHBox/StagesVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SterilizeTitle" type="Label" parent="VBoxContainer/ContentHBox/StagesVBox/SterilizeSection"]
+layout_mode = 2
+text = "• Sterilize Stage:"
+theme_override_font_sizes/font_size = 16
+
+[node name="SterilizeList" type="VBoxContainer" parent="VBoxContainer/ContentHBox/StagesVBox/SterilizeSection"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CuttingSection" type="VBoxContainer" parent="VBoxContainer/ContentHBox/StagesVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CuttingTitle" type="Label" parent="VBoxContainer/ContentHBox/StagesVBox/CuttingSection"]
+layout_mode = 2
+text = "• Cutting Stage:"
+theme_override_font_sizes/font_size = 16
+
+[node name="CuttingList" type="VBoxContainer" parent="VBoxContainer/ContentHBox/StagesVBox/CuttingSection"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PackagingSection" type="VBoxContainer" parent="VBoxContainer/ContentHBox/StagesVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PackagingTitle" type="Label" parent="VBoxContainer/ContentHBox/StagesVBox/PackagingSection"]
+layout_mode = 2
+text = "• Packaging Stage:"
+theme_override_font_sizes/font_size = 16
+
+[node name="PackagingList" type="VBoxContainer" parent="VBoxContainer/ContentHBox/StagesVBox/PackagingSection"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StatsSeparator" type="VSeparator" parent="VBoxContainer/ContentHBox"]
+
+[node name="StatsVBox" type="VBoxContainer" parent="VBoxContainer/ContentHBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="CostLabel" type="Label" parent="VBoxContainer/ContentHBox/StatsVBox"]
+layout_mode = 2
+text = "Total Cost: -- coins"
+theme_override_font_sizes/font_size = 14
+
+[node name="ThroughputLabel" type="Label" parent="VBoxContainer/ContentHBox/StatsVBox"]
+layout_mode = 2
+text = "Expected Output: -- items"
+theme_override_font_sizes/font_size = 14
+
+[node name="TimeLabel" type="Label" parent="VBoxContainer/ContentHBox/StatsVBox"]
+layout_mode = 2
+text = "Processing Time: -- seconds"
+theme_override_font_sizes/font_size = 12
+
+[node name="BudgetRemainingLabel" type="Label" parent="VBoxContainer/ContentHBox/StatsVBox"]
+layout_mode = 2
+text = "Budget Remaining: -- coins"
+theme_override_font_sizes/font_size = 12

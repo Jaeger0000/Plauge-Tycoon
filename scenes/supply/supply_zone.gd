@@ -140,4 +140,4 @@ func _on_truck_delivered(count: int) -> void:
 
 
 func _update_delivered_label() -> void:
-	delivered_label.text = "Wood Delivered: %d" % total_wood_delivered
+	delivered_label.text = "Robot Delivered: %d" % total_wood_delivered
