@@ -68,15 +68,17 @@ func _build_shop() -> void:
 
 		var name_lbl := Label.new()
 		name_lbl.text = "%s Truck" % truck_name
-		name_lbl.add_theme_font_size_override("font_size", 14)
+		#name_lbl.add_theme_font_size_override("font_size", 14)
 		vbox.add_child(name_lbl)
 
 		var info_lbl := Label.new()
 		info_lbl.text = "Speed: %d | Cap: %d" % [int(tdata["speed"]), tdata["capacity"]]
-		info_lbl.add_theme_font_size_override("font_size", 11)
+		#info_lbl.add_theme_font_size_override("font_size", 11)
 		vbox.add_child(info_lbl)
 
 		var buy_btn := Button.new()
+		buy_btn.position.x = 200
+		buy_btn.size.y = 30
 		buy_btn.text = "Buy — %d coins" % tdata["cost"]
 		buy_btn.pressed.connect(_on_buy_truck.bind(truck_name))
 		vbox.add_child(buy_btn)

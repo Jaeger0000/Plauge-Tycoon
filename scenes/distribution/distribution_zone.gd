@@ -128,7 +128,7 @@ func _get_total_route_distance() -> float:
 func _update_labels() -> void:
 	if depot:
 		crate_label.text = "Available Crates: %d (%d furniture)" % [depot.crate_count, depot.get_total_furniture()]
-	delivered_label.text = "Furniture Delivered: %d" % total_delivered
+	delivered_label.text = "Parts Delivered: %d" % total_delivered
 
 	if route_points.size() >= 2:
 		var dist := _get_total_route_distance()
