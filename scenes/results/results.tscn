@@ -37,7 +37,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Time's Up!"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 48
 
 [node name="Spacer1" type="Control" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -57,14 +56,12 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Overall Score: --"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 36
 
 [node name="StarsLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = ""
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
 
 [node name="Spacer3" type="Control" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -76,4 +73,3 @@ layout_mode = 2
 custom_minimum_size = Vector2(200, 50)
 size_flags_horizontal = 4
 text = "Back to Menu"
-theme_override_font_sizes/font_size = 20

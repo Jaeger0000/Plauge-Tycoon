@@ -24,7 +24,6 @@ mouse_filter = 2
 text = "DEPOT"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 16
 
 [node name="CrateLabel" type="Label" parent="."]
 offset_left = 0.0
@@ -35,4 +34,3 @@ mouse_filter = 2
 text = "Crates: 0"
 horizontal_alignment = 1
 vertical_alignment = 1
-theme_override_font_sizes/font_size = 11

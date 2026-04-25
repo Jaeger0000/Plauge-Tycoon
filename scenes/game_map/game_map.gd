@@ -302,7 +302,7 @@ func _update_timer_label() -> void:
 
 
 func _update_score_label() -> void:
-	score_label.text = "Furniture Delivered: %d" % furniture_delivered
+	score_label.text = "Parts Delivered: %d" % furniture_delivered
 
 
 func _update_zone_label() -> void:

@@ -37,13 +37,11 @@ theme_override_constants/separation = 16
 
 [node name="Title" type="Label" parent="VBoxContainer" unique_id=768793679]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
 text = "Wood Works"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="VBoxContainer" unique_id=1078593124]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
 text = "Learn Optimization Through Play"
 horizontal_alignment = 1
 

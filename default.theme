@@ -1,0 +1,7 @@
+[gd_resource type="Theme" format=3 uid="uid://crtfm9ak2bxpwq"]
+
+[ext_resource type="FontFile" uid="uid://bqj0ag8ixugo3" path="res://UnaverageFont.ttf" id="1_font"]
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 48
